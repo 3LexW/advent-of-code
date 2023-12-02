@@ -2,7 +2,7 @@ from functools import reduce
 import os
 import sys
 sys.path.append(os.getcwd())
-from day2.shared import split_line
+from year2023.day2.shared import split_line
 from typing import Dict
 
 ans = 0

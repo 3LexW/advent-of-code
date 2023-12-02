@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.getcwd())
-from day2.shared import split_line
+from year2023.day2.shared import split_line
 
 ans = 0
 with open(f"{os.path.dirname(__file__)}/input.txt") as f:
