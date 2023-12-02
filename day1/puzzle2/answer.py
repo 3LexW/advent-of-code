@@ -1,3 +1,4 @@
+import os
 ans = 0
 
 # List out digits from 1 to nine
@@ -15,8 +16,8 @@ letter_digits_dict = {
 number_digits = [str(i) for i in range(0, 10)]
 letter_digits = [i for i in letter_digits_dict.keys()]
 
-with open("./input.txt", "r") as f:
-    lines = f.readlines()
+with open(f"{os.path.dirname(__file__)}/input.txt") as file:
+    lines = file.readlines()
 
 for line in lines:
     # print(line)

@@ -1,7 +1,9 @@
+import os
+
 ans = 0
 number_digits = [str(i) for i in range(0, 10)]
 
-with open('input.txt', 'r') as file:
+with open(f"{os.path.dirname(__file__)}/input.txt") as file:
     lines = file.readlines()
 
 # For each line, combine the first number digit and the last number digit and form a two letter number
