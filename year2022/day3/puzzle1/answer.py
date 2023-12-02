@@ -1,15 +1,9 @@
 import os
+import sys
+sys.path.append(os.getcwd())
+from year2022.day3.shared import get_score
 
 ans = 0
-
-
-def get_score(letter: str):
-    if len(letter) != 1:
-        raise Exception("Letter should be one letter")
-    if ord("a") <= ord(letter) <= ord("z"):
-        return ord(letter) - ord("a") + 1
-    if ord("A") <= ord(letter) <= ord("Z"):
-        return ord(letter) - ord("A") + 27
 
 
 def get_shared_character(line: str):
