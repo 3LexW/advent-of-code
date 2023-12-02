@@ -1,5 +1,7 @@
-import itertools
 import os
+import sys
+sys.path.append(os.getcwd())
+from day2.shared import split_line
 
 ans = 0
 with open(f"{os.path.dirname(__file__)}/input.txt") as f:
@@ -23,11 +25,7 @@ def violation_check(draw: str):
 
 
 for line in lines:
-    game_id = int(line.split(": ")[0].split(" ")[-1])
-
-    sets = line.strip().split(": ")[-1].split("; ")
-    draws = list(itertools.chain.from_iterable([x.split(", ") for x in sets]))
-
+    game_id, draws = split_line(line)
     violation = [draw for draw in draws if violation_check(draw) == True]
     if len(violation) == 0:
         ans += game_id
