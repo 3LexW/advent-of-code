@@ -1,34 +1,18 @@
 import os
+import sys
+
+sys.path.append(os.getcwd())
 import re
 from typing import List
-
-import re
-from typing import List
-
-def get_initial_state(lines: List[str]) -> List[List[str]]:
-    pattern = re.compile(r"\d+")
-    stack_cnt = pattern.findall(lines[-1])
-    stacks = [[] for n in stack_cnt]
-
-    for line in lines[0:-1]:
-        pointer = 0
-        stack = 0
-        for i in range(0, len(stack_cnt)):
-            input = line[pointer + 1: pointer + 2]
-            if len(input.strip()) > 0: stacks[stack].append(input) 
-            stack += 1
-            pointer += 4
-
-    return stacks
+from year2022.day5.shared import get_initial_state
 
 
-def move_stack(stack: List[List[str]], count: int, from_stack: int, to_stack: int):
+def move_stack(stack: List[List[str]], count: int, from_stack: int, to_stack: int) -> List[List[str]]:
     for _ in range(0, count):
-        item = stack[from_stack - 1].pop(0)
+        item = stack[from_stack - 1].remove()
         stack[to_stack - 1].insert(0, item)
     return stack
-    
-    
+
 
 with open(f"{os.path.dirname(__file__)}/input.txt") as f:
     # Get initial stack
