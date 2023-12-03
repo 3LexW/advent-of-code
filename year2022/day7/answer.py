@@ -69,3 +69,11 @@ while line_no < len(lines):
 folder_sizes = {folder: sum([v for k, v in files.items() if k.startswith(f'{folder}')]) for folder in folders}
 
 print(f'Puzzle 1: {sum([v for k, v in folder_sizes.items() if v <= 100000])}')
+
+total_space = 70000000
+required_space = 30000000
+used_space = folder_sizes['/']
+unused_space = total_space - used_space
+to_be_free_space = required_space - unused_space
+
+print(f'Puzzle 2: {min([v for k, v in folder_sizes.items() if v >= to_be_free_space])}')
