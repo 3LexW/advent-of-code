@@ -16,7 +16,8 @@ puzzle_file = os.path.join(folder_path, "puzzle.md")
 
 # Create the answer.py file
 with open(answer_file, "w") as file:
-    file.write("# Add your solution here")
+    file.write('import os\n\n')
+    file.write('with open(f"{os.path.dirname(__file__)}/input.txt") as f:')
 
 # Create the input.txt file
 with open(input_file, "w") as file:
