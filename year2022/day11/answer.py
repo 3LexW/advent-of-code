@@ -1,3 +1,4 @@
+from functools import reduce
 from math import floor, prod
 import os
 import re
@@ -30,9 +31,10 @@ class Monkey:
         self.test_true_to = int(test_true_to)
         self.test_false_to = int(test_false_to)
 
-    def throw_item(self) -> List[Tuple[int, int]]:
+    def throw_item(self, prod_of_primes: int) -> List[Tuple[int, int]]:
         """Complete the a round's operation for a monkey, provide a list of list, each list has two entries [next_monkey_id, worry_level]"""
-        self._run_operation()
+
+        self._run_operation(prod_of_primes)
         items = self.items.copy()
         self.items = []  # Remove all items
         res = []
@@ -53,7 +55,7 @@ class Monkey:
             )
         self.items.append(item)
 
-    def _run_operation(self):
+    def _run_operation(self, prod_of_primes: int):
         """Run the operation and return the list new worry levels"""
         operators = {
             "+": add,
@@ -72,58 +74,60 @@ class Monkey:
             raise Exception("Unknown operator")
 
         if isinstance(right, int):
-            self.items = [
-                int(floor(operator(left[i], right) / 3)) for i in range(0, len(left))
-            ]
+            self.items = [operator(left[i], right) % prod_of_primes for i in range(0, len(left))]
         else:
-            self.items = [
-                int(floor(operator(left[i], right[i]) / 3)) for i in range(0, len(left))
-            ]
+            self.items = [operator(left[i], right[i]) % prod_of_primes for i in range(0, len(left))]
         self.inspect_cnt += len(self.items)
 
 
-monkeys: List[Monkey] = []
-with open(f"{os.path.dirname(__file__)}/input.txt") as f:
-    line = None
-    while line != "":
-        id = re.match(r".*Monkey (\d+)", f.readline()).groups()[0]
-        items = [
-            int(x)
-            for x in (
-                re.match(r".*Starting items: (.*)", f.readline())
-                .groups()[0]
-                .split(", ")
+def solve(rounds: int):
+    monkeys: List[Monkey] = []
+    with open(f"{os.path.dirname(__file__)}/input.txt") as f:
+        line = None
+        while line != "":
+            id = re.match(r".*Monkey (\d+)", f.readline()).groups()[0]
+            items = [
+                int(x)
+                for x in (
+                    re.match(r".*Starting items: (.*)", f.readline())
+                    .groups()[0]
+                    .split(", ")
+                )
+            ]
+            operation = re.match(r".*Operation: (.*)", f.readline()).groups()[0]
+            test_divisible_by = re.match(
+                r".*Test: divisible by (\d+)", f.readline()
+            ).groups()[0]
+            test_true_to = re.match(
+                r".*If true: throw to monkey (\d+)", f.readline()
+            ).groups()[0]
+            test_false_to = re.match(
+                r".*If false: throw to monkey (\d+)", f.readline()
+            ).groups()[0]
+
+            monkeys.append(
+                Monkey(
+                    id=id,
+                    items=items,
+                    operation=operation,
+                    test_divisible_by=test_divisible_by,
+                    test_true_to=test_true_to,
+                    test_false_to=test_false_to,
+                )
             )
-        ]
-        operation = re.match(r".*Operation: (.*)", f.readline()).groups()[0]
-        test_divisible_by = re.match(
-            r".*Test: divisible by (\d+)", f.readline()
-        ).groups()[0]
-        test_true_to = re.match(
-            r".*If true: throw to monkey (\d+)", f.readline()
-        ).groups()[0]
-        test_false_to = re.match(
-            r".*If false: throw to monkey (\d+)", f.readline()
-        ).groups()[0]
 
-        monkeys.append(
-            Monkey(
-                id=id,
-                items=items,
-                operation=operation,
-                test_divisible_by=test_divisible_by,
-                test_true_to=test_true_to,
-                test_false_to=test_false_to,
-            )
-        )
+            line = f.readline()
 
-        line = f.readline()
+    prod_of_primes = reduce(lambda a, b: a * b, [x.test_divisible_by for x in monkeys])
 
-    for _ in range(0, 20):
+    for round in range(0, rounds):
         for monkey in monkeys:
-            items_to_throw = monkey.throw_item()
+            items_to_throw = monkey.throw_item(prod_of_primes)
             for id, item in items_to_throw:
                 monkeys[id].catch_item(id, item)
+    inspect_sorted = sorted(monkeys, key=attrgetter("inspect_cnt"))
+    return prod([x.inspect_cnt for x in inspect_sorted[-2:]])
 
-top_two_inspect = sorted(monkeys, key=attrgetter("inspect_cnt"))
-print(f"Puzzle 1: {prod([x.inspect_cnt for x in top_two_inspect[-2:]])}")
+
+print(f"Puzzle 1: {solve(20)}")
+print(f"Puzzle 1: {solve(10000)}")
