@@ -3,7 +3,7 @@ import os
 import re
 
 
-def part1(time, distance):
+def get_result(time, distance):
     """
     Use quadratic equation
     > (t-x) * x= d
@@ -31,7 +31,11 @@ def part1(time, distance):
 
 
 with open(f"{os.path.dirname(__file__)}/input.txt") as f:
-    times = list(map(lambda x: int(x), re.findall(r"(\d+)", f.readline())))
-    distances = list(map(lambda x: int(x), re.findall(r"(\d+)", f.readline())))
+    times = re.findall(r"(\d+)", f.readline())
+    distances = re.findall(r"(\d+)", f.readline())
 
-print(f"Puzzle 1: {prod([part1(t, d) for t,d in zip(times, distances)])}")
+print(f"Puzzle 1: {prod([get_result(int(t), int(d)) for t,d in zip(times, distances)])}")
+
+# Part 2
+t, d = int("".join(times)), int("".join(distances))
+print(f"Puzzle 2: {get_result(int(t), int(d))}")
