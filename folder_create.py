@@ -4,6 +4,9 @@ import os
 year = input("Enter the year: ")
 day = input("Enter the day: ")
 
+# Add '0' padding to the day number if necessary
+day = day.zfill(2)
+
 # Create the folder structure
 folder_path = f"year{year}/day{day}"
 os.makedirs(folder_path, exist_ok=True)
