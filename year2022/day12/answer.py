@@ -54,3 +54,38 @@ end_row = ['E' in line for line in grid].index(True)
 end_col = grid[end_row].find("E")
 
 print(f"Puzzle 1: {scores[end_row][end_col]}")
+
+# Puzzle 2
+stack = []
+visited = []
+scores = [[elements + 1 for _ in range(0, len(grid[0]))] for _ in range(0, len(grid))]
+
+# Find starting position
+for r in range(0, len(grid)):
+    for c in range(0, len(grid)):
+        if grid[r][c] == 'a':
+            stack.append((r, c))
+            scores[r][c] = 0
+
+while stack:
+    current_pos = stack.pop(0)
+    row, col = current_pos
+    if current_pos in visited:
+        continue
+
+    for shift_row, shift_col in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        if not 0 <= row + shift_row < len(grid) or not 0 <= col + shift_col < len(grid[0]):
+            continue
+        if not is_valid_move(grid[row][col], grid[row + shift_row][col + shift_col]):
+            continue
+        scores[row + shift_row][col + shift_col] = min(
+            scores[row + shift_row][col + shift_col], scores[row][col] + 1
+        )
+        stack.append((row + shift_row, col + shift_col))
+
+    visited.append(current_pos)
+
+end_row = ['E' in line for line in grid].index(True)
+end_col = grid[end_row].find("E")
+
+print(f"Puzzle 2: {scores[end_row][end_col]}")
