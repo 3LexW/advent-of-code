@@ -21,7 +21,7 @@ def get_all_blockers(start, end) -> [(str, str)]:
     return ans
 
 
-def get_sand(start_row, start_col, blockers) -> (int, int):
+def get_sand_puzzle_1(start_row, start_col, blockers) -> (int, int):
     current_row, current_col = start_row, start_col
     shifts = [(1, 0), (1, -1), (1, 1)]
 
@@ -31,7 +31,22 @@ def get_sand(start_row, start_col, blockers) -> (int, int):
 
     for shift_row, shift_col in shifts:
         if (current_row + shift_row, current_col + shift_col) not in blockers:
-            return get_sand(current_row + shift_row, current_col + shift_col, blockers)
+            return get_sand_puzzle_1(
+                current_row + shift_row, current_col + shift_col, blockers
+            )
+    return (current_row, current_col)
+
+
+def get_sand_puzzle_2(start_row, start_col, blockers, max_row):
+    current_row, current_col = start_row, start_col
+    shifts = [(1, 0), (1, -1), (1, 1)]
+
+    if current_row == max_row:
+        return (current_row, current_col)
+
+    for shift_row, shift_col in shifts:
+        if (current_row + shift_row, current_col + shift_col) not in blockers:
+            return get_sand_puzzle_2(current_row + shift_row, current_col + shift_col, blockers, max_row)
     return (current_row, current_col)
 
 
@@ -42,12 +57,25 @@ with open(f"{os.path.dirname(__file__)}/input.txt") as f:
         for i in range(0, len(corners) - 1):
             blockers.update(get_all_blockers(corners[i], corners[i + 1]))
 
+
 step = 1
-sand = get_sand(0, 500, blockers)
+puzzle_1_blockers = blockers.copy()
+sand = get_sand_puzzle_1(0, 500, blockers)
 
 while sand:
-    blockers.add(sand)  # Sand will become the new blocker
-    sand = get_sand(0, 500, blockers)
+    puzzle_1_blockers.add(sand)  # Sand will become the new blocker
+    sand = get_sand_puzzle_1(0, 500, puzzle_1_blockers)
     step += 1
 
 print(f"Puzzle 1: {step - 1}")
+
+step = 1
+puzzle_2_blockers = blockers.copy()
+max_row = max([row for row, col in blockers]) + 1
+sand = get_sand_puzzle_2(0, 500, puzzle_2_blockers, max_row)
+while sand != (0, 500):
+    puzzle_2_blockers.add(sand)  # Sand will become the new blocker
+    sand = get_sand_puzzle_2(0, 500, puzzle_2_blockers, max_row)
+    step += 1
+
+print(f"Puzzle 2: {step}")
