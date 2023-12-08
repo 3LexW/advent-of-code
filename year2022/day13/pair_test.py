@@ -1,39 +1,38 @@
 import sys, os
 
 sys.path.append(os.getcwd())
-from year2022.day13.answer import Pair
+from year2022.day13.answer import Input
 
 
 def test_pair_1():
-    assert Pair([1, 1, 3, 1, 1], [1, 1, 5, 1, 1]).valid_pair == True
+    assert Input([1, 1, 3, 1, 1]) < Input([1, 1, 5, 1, 1])
 
 
 def test_pair_2():
-    assert Pair([[1], [2, 3, 4]], [[1], 4]).valid_pair == True
+    assert Input([[1], [2, 3, 4]]) < Input([[1], 4])
 
 
 def test_pair_3():
-    assert Pair([9], [[8, 7, 6]]).valid_pair == False
+    assert Input([9]) > Input([[8, 7, 6]])
 
 
 def test_pair_4():
-    assert Pair([[4, 4], 4, 4], [[4, 4], 4, 4, 4]).valid_pair == True
+    assert Input([[4, 4], 4, 4]) < Input([[4, 4], 4, 4, 4])
 
 
 def test_pair_5():
-    assert Pair([7, 7, 7, 7], [7, 7, 7]).valid_pair == False
+    assert Input([7, 7, 7, 7]) > Input([7, 7, 7])
 
 
 def test_pair_6():
-    assert Pair([], [3]).valid_pair == True
+    assert Input([]) < Input([3])
 
 
 def test_pair_7():
-    assert Pair([[[]]], [[]]).valid_pair == False
+    assert Input([[[]]]) > Input([[]])
 
 
 def test_pair_8():
-    assert Pair(
-        [1, [2, [3, [4, [5, 6, 7]]]], 8, 9], 
+    assert Input([1, [2, [3, [4, [5, 6, 7]]]], 8, 9]) > Input(
         [1, [2, [3, [4, [5, 6, 0]]]], 8, 9]
-    ).valid_pair == False
+    )
