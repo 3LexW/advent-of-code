@@ -65,6 +65,7 @@ def has_human(variable: str) -> bool:
         return has_human(left) or has_human(right)
 
 
+@cache
 def get_human(variable: str, target: int):
     global numbers, operations
     if variable == "humn":
