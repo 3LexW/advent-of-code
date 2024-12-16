@@ -15,6 +15,9 @@ def p1_combinations(numbers: List[int], target: int) -> bool:
     left = numbers.pop(0)
     right = numbers.pop(0)
 
+    if left > target:
+        return False  # Early escape since the number can only get bigger
+
     plus = numbers.copy()
     plus.insert(0, left + right)
     times = numbers.copy()
@@ -32,7 +35,7 @@ def p2_combinations(numbers: List[int], target: int) -> bool:
     right = numbers.pop(0)
 
     if left > target:
-        return False # Early escape since the number can only get bigger
+        return False  # Early escape since the number can only get bigger
 
     plus = numbers.copy()
     plus.insert(0, left + right)
