@@ -16,6 +16,7 @@ visited_nodes = set()
 shifts = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
 p1 = 0
+p2 = 0
 
 
 def get_neighbor_nodes(graph, r, c):
@@ -39,20 +40,75 @@ def get_neighbor_nodes(graph, r, c):
     return ans
 
 
-def calculate_sides(graph, nodes):
+def calculate_fence(graph, nodes):
     count = len(nodes)
-    sides = 0
+    fence = 0
     for [r, c] in nodes:
         current_node = graph[r][c]
         for shift_r, shift_c in shifts:
             if not (0 <= r + shift_r < total_r) or not (0 <= c + shift_c < total_c):
-                sides += 1  # Out of bound = need fence
+                fence += 1  # Out of bound = need fence
                 continue
             if graph[r + shift_r][c + shift_c] != current_node:
-                sides += 1  # Reach other nodes = need fence
+                fence += 1  # Reach other nodes = need fence
                 continue
 
-    print(current_node, count, sides, count * sides)
+    # print(current_node, count, fence, count * fence)
+    return count * fence
+
+
+def get_consecutives_in_list(l):
+    ans = 0
+    if len(l) == 0:
+        return ans
+    l.sort()
+    for i in range(1, len(l)):
+        if l[i] - l[i - 1] > 1:
+            ans += 1
+    return ans + 1
+
+
+def calculate_sides(graph, nodes):
+    count = len(nodes)
+    sides = 0
+
+    node_letter = graph[nodes[0][0]][nodes[0][1]]
+    left = min(nodes, key=lambda node: node[1])[1]
+    right = max(nodes, key=lambda node: node[1])[1]
+    top = min(nodes, key=lambda node: node[0])[0]
+    bottom = max(nodes, key=lambda node: node[0])[0]
+
+    for r in range(top, bottom + 1):
+        top_side = []
+        bottom_side = []
+
+        for c in range(left, right + 1):
+            if (r, c) not in nodes:
+                continue
+            if not (0 <= r - 1 < total_r) or graph[r - 1][c] != node_letter:
+                top_side.append(c)
+            if not (0 <= r + 1 < total_r) or graph[r + 1][c] != node_letter:
+                bottom_side.append(c)
+
+        sides += get_consecutives_in_list(top_side)
+        sides += get_consecutives_in_list(bottom_side)
+
+    for c in range(left, right + 1):
+        left_side = []
+        right_side = []
+
+        for r in range(top, bottom + 1):
+            if (r, c) not in nodes:
+                continue
+            if not (0 <= c - 1 < total_c) or graph[r][c - 1] != node_letter:
+                left_side.append(r)
+            if not (0 <= c + 1 < total_c) or graph[r][c + 1] != node_letter:
+                right_side.append(r)
+
+        sides += get_consecutives_in_list(left_side)
+        sides += get_consecutives_in_list(right_side)
+
+    # print(node_letter, count, sides, count * sides)
     return count * sides
 
 
@@ -61,6 +117,8 @@ for r in range(total_r):
         if (r, c) in visited_nodes:
             continue  # Calculated
         nodes_to_calculate = get_neighbor_nodes(graph, r, c)
-        p1 += calculate_sides(graph, nodes_to_calculate)
+        p1 += calculate_fence(graph, nodes_to_calculate)
+        p2 += calculate_sides(graph, list(nodes_to_calculate))
 
 print(f"Puzzle 1: {p1}")
+print(f"Puzzle 2: {p2}")
