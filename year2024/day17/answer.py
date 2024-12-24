@@ -1,5 +1,6 @@
 import os
 from typing import List
+from math import inf
 
 
 class Computer:
@@ -26,8 +27,8 @@ class Computer:
             self.execute()
 
     def check_prefix(self) -> bool:
-        return self.output == self.program[:len(self.output)]
-    
+        return self.output == self.program[: len(self.output)]
+
     def check_program_complete(self) -> bool:
         return not self.pointer < len(self.program)
 
@@ -51,7 +52,7 @@ class Computer:
 
         match opcode:
             case 0:  # adv
-                self.a = int(self.a / (2**combo_operand))
+                self.a = self.a >> combo_operand
             case 1:  # blx
                 self.b = self.b ^ literal_operand
             case 2:  # bst
@@ -65,9 +66,9 @@ class Computer:
             case 5:  # out
                 self.output.append(combo_operand % 8)
             case 6:  # bdv
-                self.b = int(self.a / (2**combo_operand))
+                self.b = self.a >> combo_operand
             case 7:  # cdv
-                self.c = int(self.a / (2**combo_operand))
+                self.c = self.a >> combo_operand
 
         if jump_pointer:
             self.pointer += 2
@@ -85,3 +86,23 @@ print(comp)
 comp.full_execute()
 
 print(f"Puzzle 1: {",".join([str(x) for x in comp.output])}")
+
+
+# Solve Q2 in question hard-coded way, not general solution
+def solve(program, ans):
+    if len(program) == 0:
+        print(ans)
+        exit()
+
+    for shift in range(0, 8):
+        a = (ans << 3) + shift
+        b = a % 8
+        b = b ^ 5
+        c = a >> b
+        b = b ^ 6
+        b = b ^ c
+        if b % 8 == program[-1]:
+            solve(program[:-1], a)
+
+
+solve(program, 0)
